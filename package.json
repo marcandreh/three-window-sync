@@ -1,0 +1,31 @@
+{
+  "name": "@marcandreh/three-window-sync",
+  "version": "1.0.0",
+  "description": "Sync three.js scenes across browser windows",
+  "keywords": [
+    "three.js"
+  ],
+  "author": "Marc-Andre Hoffmann (https://github.com/marcandreh)",
+  "homepage": "https://github.com/marcandreh/three-window-sync#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcandreh/three-window-sync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marcandreh/three-window-sync/issues"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "packageManager": "pnpm@8.8.0",
+  "scripts": {
+    "dev": "vite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11"
+  }
+}
