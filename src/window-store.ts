@@ -42,11 +42,11 @@ export class WindowStore {
   }
 
   get windows() {
-    return this.#items;
+    return Object.values(this.#items);
   }
 
   get instance() {
-    return this.#items;
+    return this.#instance;
   }
 
   register = () => {

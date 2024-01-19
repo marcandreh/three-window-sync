@@ -1,12 +1,14 @@
-import { OrthographicCamera, Scene, WebGLRenderer, Object3D, Color, Mesh, BoxGeometry, MeshBasicMaterial } from 'three';
+import { BoxGeometry, Color, Mesh, MeshBasicMaterial, Object3D, OrthographicCamera, Scene, WebGLRenderer } from 'three';
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { WindowStore } from './window-store';
+
 export class SyncService {
   private ready = false;
   private camera!: OrthographicCamera;
   private scene!: Scene;
   private renderer!: WebGLRenderer;
   private world!: Object3D;
-  private cubes = new Array<Mesh>();
+  private items = new Array<Object3D>();
   private store!: WindowStore;
   private sceneOffsetTarget = { x: 0, y: 0 };
   private sceneOffset = { x: 0, y: 0 };
@@ -41,16 +43,15 @@ export class SyncService {
     this.updateContent();
   };
 
-  reset = () => {};
+  reset = () => {
+    WindowStore.clear();
+  };
 
   updateContent = () => {
-    const windows = Object.values(this.store.windows);
+    this.world.remove(...this.items);
+    this.items = [];
 
-    this.cubes.forEach((cube) => {
-      this.world.remove(cube);
-    });
-
-    this.cubes = [];
+    const windows = this.store.windows;
 
     windows.forEach((window, index) => {
       const color = new Color();
@@ -62,8 +63,15 @@ export class SyncService {
       cube.position.x = window.x + window.width * 0.5;
       cube.position.y = window.y + window.height * 0.5;
 
+      // const loader = new GLTFLoader();
+      // loader.load('demo/LeePerrySmith.glb', (gltf) => {
+      //   const mesh = gltf.scene.children[0];
+      //   this.world.add(mesh);
+      //   this.items.push(cube);
+      // });
+
       this.world.add(cube);
-      this.cubes.push(cube);
+      this.items.push(cube);
     });
   };
 
@@ -100,20 +108,21 @@ export class SyncService {
     this.world.position.x = this.sceneOffset.x;
     this.world.position.y = this.sceneOffset.y;
 
-    const windows = Object.values(this.store.windows);
+    const windows = this.store.windows;
 
-    this.cubes.forEach((cube, index) => {
+    this.items.forEach((item, index) => {
       const window = windows[index];
+      if (!window) return;
 
       const posTarget = {
         x: window.x + window.width * 0.5,
         y: window.y + window.height * 0.5,
       };
 
-      cube.position.x = cube.position.x + (posTarget.x - cube.position.x) * falloff;
-      cube.position.y = cube.position.y + (posTarget.y - cube.position.y) * falloff;
-      cube.rotation.x = time * 0.5;
-      cube.rotation.y = time * 0.3;
+      item.position.x = item.position.x + (posTarget.x - item.position.x) * falloff;
+      item.position.y = item.position.y + (posTarget.y - item.position.y) * falloff;
+      item.rotation.x = time * 0.5;
+      item.rotation.y = time * 0.3;
     });
 
     this.renderer.render(this.scene, this.camera);

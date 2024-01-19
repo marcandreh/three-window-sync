@@ -43,5 +43,22 @@
     </div>
 
     <script type="module" src="/src/index.ts"></script>
+    <script type="module">
+      import { SyncService } from './src/index.ts';
+
+      const threeSync = new SyncService();
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState != 'hidden') threeSync.setup();
+      });
+
+      document.addEventListener('onload', () => {
+        if (document.visibilityState != 'hidden') threeSync.setup();
+      });
+
+      window.addEventListener('resize', () => threeSync.resize());
+
+      setTimeout(() => threeSync.setup(), 500);
+    </script>
   </body>
 </html>
