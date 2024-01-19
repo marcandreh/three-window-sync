@@ -1,14 +1,5 @@
-import {
-  OrthographicCamera,
-  Scene,
-  WebGLRenderer,
-  Object3D,
-  Color,
-  Mesh,
-  BoxGeometry,
-  MeshBasicMaterial,
-} from "three";
-import { WindowStore } from "./window-store";
+import { OrthographicCamera, Scene, WebGLRenderer, Object3D, Color, Mesh, BoxGeometry, MeshBasicMaterial } from 'three';
+import { WindowStore } from './window-store';
 export class SyncService {
   private ready = false;
   private camera!: OrthographicCamera;
@@ -24,15 +15,7 @@ export class SyncService {
     if (this.ready) return;
     this.ready = true;
 
-    this.camera = new OrthographicCamera(
-      0,
-      0,
-      window.innerWidth,
-      window.innerHeight,
-      -10000,
-      10000
-    );
-
+    this.camera = new OrthographicCamera(0, 0, window.innerWidth, window.innerHeight, -10000, 10000);
     this.camera.position.z = 2.5;
 
     this.scene = new Scene();
@@ -45,15 +28,17 @@ export class SyncService {
     this.world = new Object3D();
     this.scene.add(this.world);
 
-    this.renderer.domElement.setAttribute("id", "scene");
+    this.renderer.domElement.setAttribute('id', 'scene');
     document.body.appendChild(this.renderer.domElement);
 
-    this.store = new WindowStore(this.updateContent);
+    this.store = new WindowStore();
+    this.store.onChange = this.updateContent;
     this.store.register();
 
     this.resize();
     this.updateWindow(false);
     this.render();
+    this.updateContent();
   };
 
   reset = () => {};
@@ -61,7 +46,7 @@ export class SyncService {
   updateContent = () => {
     const windows = Object.values(this.store.windows);
 
-    this.cubes.forEach(cube => {
+    this.cubes.forEach((cube) => {
       this.world.remove(cube);
     });
 
@@ -72,10 +57,7 @@ export class SyncService {
       color.setHSL(index * 0.1, 1.0, 0.5);
 
       const size = 100 + index * 50;
-      const cube = new Mesh(
-        new BoxGeometry(size, size, size),
-        new MeshBasicMaterial({ color, wireframe: true })
-      );
+      const cube = new Mesh(new BoxGeometry(size, size, size), new MeshBasicMaterial({ color, wireframe: true }));
 
       cube.position.x = window.x + window.width * 0.5;
       cube.position.y = window.y + window.height * 0.5;
@@ -112,12 +94,8 @@ export class SyncService {
     hasChanges && this.updateWindow();
 
     const falloff = 0.05;
-    this.sceneOffset.x =
-      this.sceneOffset.x +
-      (this.sceneOffsetTarget.x - this.sceneOffset.x) * falloff;
-    this.sceneOffset.y =
-      this.sceneOffset.y +
-      (this.sceneOffsetTarget.y - this.sceneOffset.y) * falloff;
+    this.sceneOffset.x = this.sceneOffset.x + (this.sceneOffsetTarget.x - this.sceneOffset.x) * falloff;
+    this.sceneOffset.y = this.sceneOffset.y + (this.sceneOffsetTarget.y - this.sceneOffset.y) * falloff;
 
     this.world.position.x = this.sceneOffset.x;
     this.world.position.y = this.sceneOffset.y;
@@ -132,10 +110,8 @@ export class SyncService {
         y: window.y + window.height * 0.5,
       };
 
-      cube.position.x =
-        cube.position.x + (posTarget.x - cube.position.x) * falloff;
-      cube.position.y =
-        cube.position.y + (posTarget.y - cube.position.y) * falloff;
+      cube.position.x = cube.position.x + (posTarget.x - cube.position.x) * falloff;
+      cube.position.y = cube.position.y + (posTarget.y - cube.position.y) * falloff;
       cube.rotation.x = time * 0.5;
       cube.rotation.y = time * 0.3;
     });

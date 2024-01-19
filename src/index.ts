@@ -1,19 +1,19 @@
-import { SyncService } from "./sync-service";
+import { SyncService } from './sync-service';
 
 export default function sync() {
-  const service = new SyncService();
+  const threeSync = new SyncService();
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState != "hidden") service.setup();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState != 'hidden') threeSync.setup();
   });
 
-  document.addEventListener("onload", () => {
-    if (document.visibilityState != "hidden") service.setup();
+  document.addEventListener('onload', () => {
+    if (document.visibilityState != 'hidden') threeSync.setup();
   });
 
-  setTimeout(() => service.setup(), 500);
+  setTimeout(() => threeSync.setup(), 500);
 
-  window.addEventListener("resize", () => service.resize());
+  window.addEventListener('resize', () => threeSync.resize());
 }
 
 sync();

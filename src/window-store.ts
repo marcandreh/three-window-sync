@@ -12,21 +12,18 @@ type Window = Shape & {
 type ChangeEventHandler = () => void;
 
 export class WindowStore {
-  windows: Record<string, Window> = {};
-  instance?: Window;
-  private onChange?: ChangeEventHandler;
+  static KEY = 'windows';
 
-  static KEY = "windows";
+  #items: Record<string, Window> = {};
+  #instance?: Window;
+  onChange?: ChangeEventHandler;
 
-  constructor(onChange?: ChangeEventHandler) {
-    this.onChange = onChange;
-
-    window.addEventListener("storage", event => {
-      if (event.key == WindowStore.KEY)
-        this.handleStorageChange(event.newValue ?? "{}");
+  constructor() {
+    window.addEventListener('storage', ({ key, newValue }) => {
+      if (key == WindowStore.KEY) this.handleStorageChange(newValue);
     });
 
-    window.addEventListener("beforeunload", () => {
+    window.addEventListener('beforeunload', () => {
       this.unregister();
     });
   }
@@ -35,7 +32,7 @@ export class WindowStore {
     localStorage.removeItem(WindowStore.KEY);
   };
 
-  private get shape() {
+  get shape() {
     return {
       x: window.screenLeft,
       y: window.screenTop,
@@ -44,59 +41,67 @@ export class WindowStore {
     };
   }
 
+  get windows() {
+    return this.#items;
+  }
+
+  get instance() {
+    return this.#items;
+  }
+
   register = () => {
     const json = localStorage.getItem(WindowStore.KEY);
-    if (json) this.windows = JSON.parse(json);
+    if (json) this.#items = JSON.parse(json);
 
-    this.instance = {
+    this.#instance = {
       id: new Date().getTime(),
       ...this.shape,
     };
 
-    this.windows[this.instance.id] = this.instance;
-    localStorage.setItem(WindowStore.KEY, JSON.stringify(this.windows));
+    this.#items[this.#instance.id] = this.#instance;
+    localStorage.setItem(WindowStore.KEY, JSON.stringify(this.#items));
   };
 
   unregister = () => {
-    if (!this.instance) return;
+    if (!this.#instance) return;
 
-    delete this.windows[this.instance.id];
-    localStorage.setItem(WindowStore.KEY, JSON.stringify(this.windows));
-  };
-
-  private handleStorageChange = (value: string) => {
-    const windows = JSON.parse(value) ?? {};
-
-    let hashA = 0;
-    Object.keys(windows).forEach(id => (hashA += Number(id)));
-    let hashB = 0;
-    Object.keys(this.windows).forEach(id => (hashB += Number(id)));
-
-    if (hashA !== hashB) this.onChange?.();
+    delete this.#items[this.#instance.id];
+    localStorage.setItem(WindowStore.KEY, JSON.stringify(this.#items));
   };
 
   update() {
-    if (!this.instance) return false;
+    if (!this.#instance) return false;
 
     const shape = this.shape;
 
     if (
-      this.instance.x !== shape.x ||
-      this.instance.y !== shape.y ||
-      this.instance.height !== shape.height ||
-      this.instance.width !== shape.width
+      this.#instance.x !== shape.x ||
+      this.#instance.y !== shape.y ||
+      this.#instance.height !== shape.height ||
+      this.#instance.width !== shape.width
     ) {
-      this.instance = {
-        id: this.instance.id,
+      this.#instance = {
+        id: this.#instance.id,
         ...shape,
       };
 
-      this.windows[this.instance.id] = this.instance;
-      localStorage.setItem(WindowStore.KEY, JSON.stringify(this.windows));
+      this.#items[this.#instance.id] = this.#instance;
+      localStorage.setItem(WindowStore.KEY, JSON.stringify(this.#items));
 
       return true;
     }
 
     return false;
   }
+
+  private handleStorageChange = (value: string | null) => {
+    const windows = value ? JSON.parse(value) : null;
+
+    let hashA = 0;
+    windows && Object.keys(windows).forEach((id) => (hashA += Number(id)));
+    let hashB = 0;
+    Object.keys(this.#items).forEach((id) => (hashB += Number(id)));
+
+    if (hashA !== hashB) this.onChange?.();
+  };
 }

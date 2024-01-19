@@ -3,10 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Demo</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        font-family: sans-serif;
+      }
+
+      .overlay {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        margin: 32px;
+        display: flex;
+        gap: 12px;
+      }
+
+      .button {
+        display: block;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 2px;
+        text-decoration: none;
+        text-align: center;
+        background: rgb(255 255 255 / 85%);
+        color: rgb(0 0 0 / 85%);
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div class="overlay">
+      <a class="button" href="#" onClick="window.open('/', '', 'width=600,height=600'); return false;">A</a>
+      <a class="button" href="#" onClick="return false;">C</a>
+    </div>
+
     <script type="module" src="/src/index.ts"></script>
   </body>
 </html>
