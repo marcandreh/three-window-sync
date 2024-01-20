@@ -1,6 +1,6 @@
 import { BoxGeometry, Color, Mesh, MeshBasicMaterial, Object3D, OrthographicCamera, Scene, WebGLRenderer } from 'three';
-// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { WindowStore } from './window-store';
+import { WindowStack } from './window-stack';
+import { WindowStore } from './types';
 
 export class SyncService {
   private ready = false;
@@ -33,7 +33,7 @@ export class SyncService {
     this.renderer.domElement.setAttribute('id', 'scene');
     document.body.appendChild(this.renderer.domElement);
 
-    this.store = new WindowStore();
+    this.store = new WindowStack();
     this.store.onChange = this.updateContent;
     this.store.register();
 
@@ -41,10 +41,13 @@ export class SyncService {
     this.updateWindow(false);
     this.render();
     this.updateContent();
+
+    // Automatically unregister this window when it is closed.
+    window.addEventListener('beforeunload', this.store.unregister);
   };
 
   reset = () => {
-    WindowStore.clear();
+    this.store.clear();
   };
 
   updateContent = () => {

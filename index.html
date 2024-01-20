@@ -38,15 +38,28 @@
   </head>
   <body>
     <div class="overlay">
-      <a class="button" href="#" onClick="window.open('/', '', 'width=600,height=600'); return false;">A</a>
-      <a class="button" href="#" onClick="return false;">C</a>
+      <a id="add" class="button" href="#" onClick="add()">A</a>
+      <a id="clear" class="button" href="#" onClick="clear()">C</a>
     </div>
 
     <script type="module" src="/src/index.ts"></script>
     <script type="module">
       import { SyncService } from './src/index.ts';
 
+      document.getElementById("add").addEventListener("click", add);
+      document.getElementById("clear").addEventListener("click", clear);
+
       const threeSync = new SyncService();
+
+      function add() {
+        window.open('/', '', 'width=600,height=600');
+        return false;
+      }
+
+      function clear() {
+        threeSync.reset();
+        return false;
+      }
 
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState != 'hidden') threeSync.setup();
