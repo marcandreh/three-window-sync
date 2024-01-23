@@ -44,12 +44,12 @@
 
     <script type="module" src="/src/index.ts"></script>
     <script type="module">
-      import { SyncService } from './src/index.ts';
+      import { threeWindowSyncDemo } from './src/index.ts';
 
       document.getElementById("add").addEventListener("click", add);
       document.getElementById("clear").addEventListener("click", clear);
 
-      const threeSync = new SyncService();
+      const { store } = threeWindowSyncDemo();
 
       function add() {
         window.open('/', '', 'width=600,height=600');
@@ -57,21 +57,9 @@
       }
 
       function clear() {
-        threeSync.reset();
+        store.clear();
         return false;
       }
-
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState != 'hidden') threeSync.setup();
-      });
-
-      document.addEventListener('onload', () => {
-        if (document.visibilityState != 'hidden') threeSync.setup();
-      });
-
-      window.addEventListener('resize', () => threeSync.resize());
-
-      setTimeout(() => threeSync.setup(), 500);
     </script>
   </body>
 </html>
